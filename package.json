@@ -1,7 +1,7 @@
 {
   "name": "xm-web-sdk",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.1",
   "type": "module",
   "sideEffects": false,
   "engines": {
@@ -9,15 +9,16 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --watch",
-    "build-all": "tsc && vite build:rn && vite build:wx && vite build:pc",
-    "build:rn": "vite build --platform rn",
-    "build:wx": "vite build --platform wx",
-    "build:pc": "vite build --platform pc"
+    "build": "vite build"
   },
+  "main": "./dist/index.wx.js",
   "files": [
-    "dist"
+    "dist",
+    "package.json",
+    "README.md"
   ],
+  "types": "./dist/index.pc.d.ts",
+  "typings": "./dist/index.pc.d.ts",
   "exports": {
     "./pc": {
       "import": "./dist/index.pc.js",
@@ -26,6 +27,10 @@
     "./wx": {
       "import": "./dist/index.wx.js",
       "require": "./dist/index.wx.cjs"
+    },
+    "./rn": {
+      "import": "./dist/index.rn.js",
+      "require": "./dist/index.rn.cjs"
     }
   },
   "devDependencies": {

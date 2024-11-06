@@ -5,7 +5,10 @@ import dts from 'vite-plugin-dts';
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
-    // dts({ rollupTypes: true })
+    dts({
+      rollupTypes: true,
+      insertTypesEntry: true
+    })
   ],
   build: {
     lib: {

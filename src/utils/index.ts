@@ -11,14 +11,18 @@ export const isUndef = (value: unknown): value is undefined => typeof value === 
 export const chunk = <T>(list: T[], size: number = 1) => {
   if (!list?.length) return [];
   const arr: T[][] = [];
-  const _chunk: T[] = [];
+  let index = 0;
+  arr[index] = [];
   list.forEach(item => {
-    if (_chunk.length < size) {
-      _chunk.push(item);
-    } else {
-      arr.push(_chunk);
-      _chunk.length = 0;
+    if (arr[index].length < size) {
+      arr[index].push(item);
+    }
+    if (arr[index].length === size) {
+      index++;
+      arr[index] = [];
+      arr[index].push(item);
     }
   })
+
   return arr;
 }

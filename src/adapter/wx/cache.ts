@@ -6,7 +6,7 @@ class WXCacheStore<T> {
     this.store = {
       get: (key: string) => wx.getStorageSync(key),
       set: (key: string, data: T) => wx.setStorageSync(key, data),
-      clear: (key: string) => wx.setStorageSync(key, null)
+      clear: (key: string) => wx.setStorageSync(key, {})
     };
   }
 
@@ -18,7 +18,9 @@ class WXCacheStore<T> {
     this.store.set(this.STORE_KEY, data);
   }
 
-  clear() {}
+  clear() {
+    this.store.clear(this.STORE_KEY);
+  }
 }
 
 export default new WXCacheStore();

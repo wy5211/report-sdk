@@ -1,12 +1,18 @@
+import { EventType } from '@/config/eventType';
+import { IQueueCacheMapper, ExtInfo } from './../types/index';
 import { IConfig, IRequestData, IResponseData } from '@/types';
-import { isFunction } from '@/utils';
+import { isFunction, chunk } from '@/utils';
+import emitter from './emitter';
+import { EmitterKeys } from '@/config/emitterKey';
 
 class UploadManager {
+  /** 错误重试次数 */
   private count = 0;
   private timer: NodeJS.Timeout | undefined;
 
   constructor(private config: IConfig) {
     this.count = 0;
+    emitter.on(EmitterKeys.CACHE_LIMITED_REACHED, this.handleCacheUpload);
   }
 
   async run(data: IRequestData) {
@@ -29,6 +35,20 @@ class UploadManager {
         }, interval)
       }
     }
+  }
+
+  handleCacheUpload(data: IQueueCacheMapper) {
+    const sliceUpload = (eventType: EventType, sendData: ExtInfo[]) => {
+      chunk(sendData, 10).forEach((item: ExtInfo[]) => {
+        this.run({
+          eventType,
+          extInfo: item,
+        })
+      });
+    }
+    Object.keys(data).forEach((k) => {
+      sliceUpload(k as EventType, data[k as EventType] as ExtInfo[]);
+    })
   }
 }
 

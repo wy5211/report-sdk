@@ -1,27 +1,38 @@
-import { SpmIdType } from '@/config/spmId';
 import { EventType } from "@/config/eventType";
 
 export type IFunc = (...args: any[]) => any;
+
+export type ExtInfoEventType = "pv" | "view" | "click" | "event";
+
 export interface ExtInfo {
-  userId: string;
-  enterTimestamp: number;
-  eventType: "pv" | "view" | "click" | "event";
-  exitTimestamp: number;
-  spmId: SpmIdType;
+  userId?: string;
+  enterTimestamp?: number;
+  eventType: ExtInfoEventType;
+  exitTimestamp?: number;
+  spmId: string;
+  timestamp?: number;
 };
+
 export type IPlatform = 'RN' | 'WX' | 'PC';
+
+/** 调用接口传参 data */
 export interface IRequestData {
   eventType: EventType;
-  deviceInfo: string;
-  param: Object | Array<string>;
-  extInfo: ExtInfo;
+  extInfo: ExtInfo | ExtInfo[];
+  deviceInfo?: string;
+  param?: Object | Array<string>;
+  platform?: string;
+  userId?: string;
+  version?: string;
 }
+
 export interface IResponseData {
   code: number;
   msg: string;
   data: object;
   success: boolean;
 }
+
 export interface IConfig {
   /** 是否开启日志 */
   openLogger: boolean;
@@ -30,7 +41,7 @@ export interface IConfig {
   /** 平台 */
   platform: IPlatform;
   /** 版本信息 */
-  release: string;
+  version: string;
   /** 环境信息 */
   env: string;
   /** 最大缓存数量 */
@@ -39,6 +50,8 @@ export interface IConfig {
   retryCount: number;
   /** 上传重试间隔，单位ms */
   interval: number;
+  deviceInfo?: string;
+  userId?: string;
   /** 上传前调整数据上报格式 */
   beforeSend: (data: IRequestData) => IRequestData;
   /** 上传请求 */
@@ -46,26 +59,33 @@ export interface IConfig {
   /** 上传后回调 */
   afterSend: (response: IResponseData) => void;
 }
-
-export interface ISdkWebManager {
-  /** 初始化 sdk */
-  init: (config: IConfig) => void;
-  /** 上报事件 */
-  triggerEvent: (eventData: IRequestData) => void;
-  on: (key: string, listener: IFunc) => void;
-  emit: (key: string, data: IRequestData) => void;
+/** 用户需要上传的数据 */
+export interface ITriggerData {
+  eventType: EventType;
+  extInfo: {
+    eventType: ExtInfoEventType;
+    spmId: string;
+  },
+  timestamp?: number;
+}
+export interface IClientConfig {
+  userId?: string;
+  /** 版本信息 */
+  version?: string;
+  /** 环境信息 */
+  env?: string;
+  platform?: string;
 }
 
 export interface IAdapter {
-  
+  cache?: ICache;
+  deviceInfo?: string;
 }
 
-export interface IPlugin {
-  init: (config: IConfig) => void;
-}
+export type IQueueCacheMapper = Record<EventType, IRequestData['extInfo'][]>
 
 export interface ICache {
-  get: () => void;
-  set: () => void;
+  get: () => IQueueCacheMapper;
+  set: (data: IQueueCacheMapper) => void;
   clear: () => void;
 }

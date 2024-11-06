@@ -1,7 +1,6 @@
-import { IRequestData } from '@/types/type';
-import { IRequestData, IConfig, ICache } from '@/types';
-import emitter, { Emitter } from './emitter';
-import { CACHE_LIMITED_REACHED } from '@/config/emitterKey';
+import { IRequestData, IConfig, ICache, IQueueCacheMapper } from '@/types';
+import emitter from './emitter';
+import { EmitterKeys } from '@/config/emitterKey';
 
 const DEFAULT_MAX_CACHE_SIZE = 10;
 
@@ -12,32 +11,38 @@ class CacheManager {
 
   private maxCacheCount = DEFAULT_MAX_CACHE_SIZE;
   private cache: ICache | undefined;
-  private queue: IRequestData[] = [];
+  private queueMapper: IQueueCacheMapper = {} as IQueueCacheMapper;
 
-  constructor(config: IConfig) {
+  constructor(config: IConfig, cacheAdapter: ICache) {
     const { maxCacheCount } = config || {};
     this.maxCacheCount = maxCacheCount;
-    // TODO: 根据config.platform 选择 缓存
-    this.cache = {} as ICache
-    this.queue = this.cache.get() || [];
+    this.cache = cacheAdapter;
+    this.queueMapper = this.cache.get() || {} as IQueueCacheMapper;
   }
 
   set(data: IRequestData) {
-    if (this.getCacheSize() + 1 > this.maxCacheSize) {
+    this.queueMapper[data.eventType] = [
+      ...(this.queueMapper[data.eventType] || []),
+      ...(Array.isArray(data.extInfo) ? data.extInfo : [data.extInfo]),
+    ];
+    this.cache!.set(this.queueMapper);
+    if (this.getCacheSize() + 1 >= this.maxCacheCount) {
       this.onMemoryLimitReached();
-      return;
     }
-    const queue = this.queue.concat(data)
-    this.cache.set(queue);
-    this.queue = queue;
   }
 
   private onMemoryLimitReached() {
-    emitter.emit(CACHE_LIMITED_REACHED);
+    emitter.emit(
+      EmitterKeys.CACHE_LIMITED_REACHED,
+      this.cache?.get()!
+    );
   }
 
   private getCacheSize() {
-    return this.queue.length;
+    return Object.values(this.queueMapper).reduce((acc, cur) => {
+      acc = acc + (cur?.length || 0);
+      return acc;
+    }, 0);
   }
 }
 

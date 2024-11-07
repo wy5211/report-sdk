@@ -19,7 +19,7 @@ class SdkWebManager {
   private uploader: UploadManager | undefined = undefined;
   private cache: CacheManager  | undefined = undefined;
 
-  constructor(private adapter?: IAdapter) {}
+  constructor(private adapter: IAdapter) {}
 
   /** 初始化 sdk */
   init (config: IConfig) {
@@ -27,6 +27,11 @@ class SdkWebManager {
       ...sdkDefaultConfig,
       deviceInfo: this.adapter?.deviceInfo,
       ...config,
+    }
+
+    // 支持自定义缓存
+    if (config.cache) {
+      this.adapter.cache = config.cache;
     }
 
     // 添加 日志记录器
@@ -39,7 +44,7 @@ class SdkWebManager {
     */
     if (!this.config?.autoReport) {
       if (!this.adapter?.cache) {
-        throw new Error('No cache adapter');
+        throw new Error('需要提供自定义缓存器');
       }
       this.cache = new CacheManager(config, this.adapter.cache);
     }

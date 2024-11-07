@@ -6,6 +6,7 @@
 - 支持埋点手动上报
 - 支持埋点数据缓存批量上报
 - 上报数据定制化
+- 支持自定义缓存
 
 ## install
 
@@ -92,6 +93,8 @@ xmSdk.init({
   deviceInfo?: string;
   /** 用户 id */
   userId?: string;
+  /** 自定义缓存器 */
+  cache?: ICache;
   /** 缓存分批上传数量, 默认 10 */
   cacheUploadCount?: number;
   /** 上传前调整数据上报格式 */

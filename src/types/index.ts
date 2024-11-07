@@ -58,6 +58,8 @@ export interface IConfig {
   userId?: string;
   /** 缓存分批上传数量, 默认 10 */
   cacheUploadCount?: number;
+  /** 自定义缓存器 */
+  cache?: ICache;
   /** 上传前调整数据上报格式 */
   beforeSend?: (data: IRequestData) => IRequestData;
   /** 上传请求 */

@@ -60,6 +60,8 @@ export interface IConfig {
   cacheUploadCount?: number;
   /** 自定义缓存器 */
   cache?: ICache;
+  /** 获取环境 dev test test1 test2 test3 prod */
+  getEnv?: () => string;
   /** 上传前调整数据上报格式 */
   beforeSend?: (data: IRequestConfig) => IRequestConfig;
   /** 上传请求 */

@@ -89,7 +89,7 @@ class SdkWebManager {
     try {
       cloudConfig = await config.request(requestInstance({
         type: 'config',
-        env: config?.env,
+        env: config?.getEnv?.() ?? config?.env,
       }));
     } catch (error) {}
 

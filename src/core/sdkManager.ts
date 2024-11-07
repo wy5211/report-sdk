@@ -1,6 +1,7 @@
 import { sdkDefaultConfig } from '@/config/sdkDefault';
 import type {
   IAdapter,
+  ICache,
   IConfig,
   IRequestData,
   ITriggerData,
@@ -31,6 +32,7 @@ class SdkWebManager {
 
     // 支持自定义缓存
     if (config.cache) {
+      this.validateCache(config.cache);
       this.adapter.cache = config.cache;
     }
 
@@ -44,7 +46,7 @@ class SdkWebManager {
     */
     if (!this.config?.autoReport) {
       if (!this.adapter?.cache) {
-        throw new Error('需要提供自定义缓存器');
+        throw new Error(' 🚨 需要提供自定义缓存器');
       }
       this.cache = new CacheManager(config, this.adapter.cache);
     }
@@ -58,7 +60,7 @@ class SdkWebManager {
       ...this.config,
       ...clientConfig,
     };
-    logger!.log('更新配置完成',this.config);
+    logger!.log(' 🎩 更新配置完成',this.config);
   }
 
   /** 上报事件 */
@@ -119,6 +121,14 @@ class SdkWebManager {
         ...end?.extInfo,
       }]
     }
+  }
+
+  private validateCache(cache: ICache) {
+    ['get', 'set', 'clear'].forEach((k) => {
+      if (!(k in cache)) {
+        throw new Error(` 🚨 自定义缓存器需要提供 【${k}】 方法`);
+      }
+    })
   }
 }
 

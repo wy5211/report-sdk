@@ -61,9 +61,9 @@ export interface IConfig {
   /** 自定义缓存器 */
   cache?: ICache;
   /** 上传前调整数据上报格式 */
-  beforeSend?: (data: IRequestData) => IRequestData;
+  beforeSend?: (data: IRequestConfig) => IRequestConfig;
   /** 上传请求 */
-  request: (data: IRequestData) => Promise<IResponseData>;
+  request: (config: IRequestConfig) => Promise<IResponseData>;
   /** 上传后回调 */
   afterSend?: (response: IResponseData) => void;
 }
@@ -80,12 +80,25 @@ export interface ITriggerData {
 export interface IAdapter {
   cache?: ICache;
   deviceInfo?: string;
+  config?: Record<string, any>;
 }
 
-export type IQueueCacheMapper = Record<EventType, IRequestData['extInfo'][]>
+export type IQueueCacheMapper = Record<EventType, ExtInfo[]>
 
 export interface ICache {
-  get: () => IQueueCacheMapper;
-  set: (data: IQueueCacheMapper) => void;
-  clear: () => void;
+  get: (key: string) => IQueueCacheMapper;
+  set: (key: string, data: IQueueCacheMapper) => void;
+  clear: (key: string) => void;
+}
+
+export interface IRequestConfig {
+  method: string;
+  hostConfigKey: string;
+  path: string;
+  body: Record<string, any> | undefined;
+  header: Record<string, any> | undefined;
+}
+
+export enum ICacheKeys {
+  XM_WEB_SDK_APP_EVENT_KEY = 'XM_WEB_SDK_APP_EVENT_KEY'
 }

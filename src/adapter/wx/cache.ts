@@ -1,6 +1,5 @@
 class WXCacheStore<T> {
   private store;
-  private STORE_KEY = 'WX_XM_SDK_STORE_KEY';
 
   constructor() {
     this.store = {
@@ -10,16 +9,16 @@ class WXCacheStore<T> {
     };
   }
 
-  get() {
-    return this.store.get(this.STORE_KEY);
+  get(key: string) {
+    return this.store.get(key);
   }
 
-  set(data: T) {
-    this.store.set(this.STORE_KEY, data);
+  set(key: string, data: T) {
+    this.store.set(key, data);
   }
 
-  clear() {
-    this.store.clear(this.STORE_KEY);
+  clear(key: string) {
+    this.store.clear(key);
   }
 }
 

@@ -1,6 +1,5 @@
 class PCCacheStore<T> {
   private store;
-  private STORE_KEY = 'PC_XM_SDK_STORE_KEY';
 
   constructor() {
     this.store = {
@@ -10,8 +9,8 @@ class PCCacheStore<T> {
     };
   }
 
-  get(): T {
-    const val = this.store.get(this.STORE_KEY);
+  get(key: string): T {
+    const val = this.store.get(key);
     let ret: T = {} as T;
     if (val) {
       try {
@@ -21,12 +20,12 @@ class PCCacheStore<T> {
     return ret;
   }
 
-  set(data: T) {
-    this.store.set(this.STORE_KEY, data);
+  set(key: string, data: T) {
+    this.store.set(key, data);
   }
 
-  clear() {
-    this.store.clear(this.STORE_KEY);
+  clear(key: string) {
+    this.store.clear(key);
   }
 }
 

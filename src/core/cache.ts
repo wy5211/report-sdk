@@ -1,16 +1,13 @@
-import { IRequestData, IConfig, ICache, IQueueCacheMapper } from '@/types';
+import { IRequestData, IConfig, ICache, IQueueCacheMapper, ICacheKeys } from '@/types';
 import emitter from './emitter';
 import { EmitterKeys } from '@/config/emitterKey';
 import logger from '@/utils/logger';
-
-const DEFAULT_MAX_CACHE_SIZE = 10;
 
 /**
  * 支持缓存数量达到一定数量自动上传
 */
 class CacheManager {
-
-  private maxCacheCount = DEFAULT_MAX_CACHE_SIZE;
+  private maxCacheCount;
   private cache: ICache | undefined;
   private queueMapper: IQueueCacheMapper = {} as IQueueCacheMapper;
 
@@ -18,7 +15,9 @@ class CacheManager {
     const { maxCacheCount } = config || {};
     this.maxCacheCount = maxCacheCount!;
     this.cache = cacheAdapter;
-    this.queueMapper = this.cache.get() || {} as IQueueCacheMapper;
+    this.queueMapper = this.cache.get(ICacheKeys.XM_WEB_SDK_APP_EVENT_KEY) || {} as IQueueCacheMapper;
+
+    emitter.on(EmitterKeys.CLEAR_CACHE, this.clear);
   }
 
   set(data: IRequestData) {
@@ -26,7 +25,7 @@ class CacheManager {
       ...(this.queueMapper[data.eventType] || []),
       ...(Array.isArray(data.extInfo) ? data.extInfo : [data.extInfo]),
     ];
-    this.cache!.set(this.queueMapper);
+    this.cache!.set(ICacheKeys.XM_WEB_SDK_APP_EVENT_KEY, this.queueMapper);
     logger.log('缓存设置成功', this.queueMapper);
     if (this.getCacheSize() >= this.maxCacheCount) {
       this.onMemoryLimitReached();
@@ -34,14 +33,23 @@ class CacheManager {
   }
 
   private onMemoryLimitReached() {
-    const _data = this.cache?.get()!;
+    const _data = this.cache?.get(ICacheKeys.XM_WEB_SDK_APP_EVENT_KEY)!;
     logger.log('缓存触发最大值', _data);
     emitter.emit(
       EmitterKeys.CACHE_LIMITED_REACHED,
-      _data
+      [ICacheKeys.XM_WEB_SDK_APP_EVENT_KEY, _data]
     );
-    this.cache?.clear();
     this.queueMapper = {} as IQueueCacheMapper;
+  }
+
+  clear(event: [ICacheKeys, IRequestData]): void {
+    const [key, data] = event;
+    const _extInfo = Array.isArray( data.extInfo) ? data.extInfo : [data.extInfo];
+    const _spmIds = _extInfo.map((e) => e.spmId) || [];
+    const _cacheData = this.cache?.get(key)?.[data.eventType] || [];
+    const newData = _cacheData?.filter(e => !_spmIds.includes(e.spmId)) || [];
+    this.queueMapper[data.eventType] = newData;
+    this.cache?.set(key, this.queueMapper);
   }
 
   private getCacheSize() {

@@ -6,9 +6,10 @@ import type {
   IRequestData,
   ITriggerData,
 } from '@/types';
+import logger from '@/utils/logger';
 import UploadManager from './upload';
 import CacheManager from './cache';
-import logger from '@/utils/logger';
+import { requestInstance } from './request';
 
 /**
  * 调度 sdk 初始化，上传 ，缓存功能
@@ -23,17 +24,14 @@ class SdkWebManager {
   constructor(private adapter: IAdapter) {}
 
   /** 初始化 sdk */
-  init (config: IConfig) {
-    this.config = {
-      ...sdkDefaultConfig,
-      deviceInfo: this.adapter?.deviceInfo,
-      ...config,
-    }
+  async init (config: IConfig) {
+    // 初始化配置
+    await this.initConfig(config);
 
     // 支持自定义缓存
-    if (config.cache) {
-      this.validateCache(config.cache);
-      this.adapter.cache = config.cache;
+    if (this.config.cache) {
+      this.validateCache(this.config.cache);
+      this.adapter.cache = this.config.cache;
     }
 
     // 添加 日志记录器
@@ -79,6 +77,27 @@ class SdkWebManager {
       }
     } else {
       this.handleUploadOrCache(this.generateCommonData(eventData));
+    }
+  }
+
+  private async initConfig(config: IConfig) {
+    if (!('request' in config)) {
+      throw new Error('请配置 request');
+    }
+    // 获取云端配置
+    let cloudConfig = {};
+    try {
+      cloudConfig = await config.request(requestInstance({
+        type: 'config',
+        env: config?.env,
+      }));
+    } catch (error) {}
+
+    this.config = {
+      ...sdkDefaultConfig,
+      deviceInfo: this.adapter?.deviceInfo,
+      ...config,
+      ...(cloudConfig || {}),
     }
   }
 

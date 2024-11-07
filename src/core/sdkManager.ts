@@ -15,7 +15,7 @@ import logger from '@/utils/logger';
 class SdkWebManager {
 
   private config: IConfig = {} as IConfig;
-  private lastRecord: ITriggerData | null = null;
+  private lastRecordStack: Record<string, ITriggerData | null> = {};
   private uploader: UploadManager | undefined = undefined;
   private cache: CacheManager  | undefined = undefined;
 
@@ -60,15 +60,15 @@ class SdkWebManager {
   triggerEvent (eventData: ITriggerData) {
     eventData.timestamp = +new Date();
     const { extInfo } = eventData || {};
-    const { eventType } = extInfo || {};
+    const { eventType, spmId } = extInfo || {};
     // 需要缓存第一次上报的 eventType
     if (['pv'].includes(eventType)) {
-      if (this.lastRecord) {
-        const _data = this.generatePvData([this.lastRecord, eventData]);
-        this.lastRecord = null;
+      if (this.lastRecordStack?.[spmId]) {
+        const _data = this.generatePvData([this.lastRecordStack?.[spmId], eventData]);
         this.handleUploadOrCache(_data);
+        this.lastRecordStack[spmId] = null;
       } else {
-        this.lastRecord = eventData;
+        this.lastRecordStack[spmId] = eventData;
       }
     } else {
       this.handleUploadOrCache(this.generateCommonData(eventData));

@@ -119,3 +119,38 @@ xmSdk.triggerEvent({
   }
 })
 ```
+
+## 本地调试
+
+1. 克隆代码[https://gitlab.yofoto.cn/xm/client/front_libs/xm_web_sdk/-/tree/feat/sdk]
+```shell
+  git clone https://gitlab.yofoto.cn/xm/client/front_libs/xm_web_sdk.git
+```
+
+2. 切换分支到 **feat/sdk**，执行 pnpm install
+```shell
+  git checkout feat/sdk
+
+  pnpm install
+```
+
+3. 执行本地打包后，加入 link 链接
+```shell
+  pnpm build
+
+  pnpm link --global
+```
+
+4. 在导入的项目中依赖添加 "xm-web-sdk": "~1.0.1",再使用 npm link 链接到 node_modules
+package.json
+```json
+  {
+    "xm-web-sdk": "~1.0.1"
+  }
+```
+
+```shell
+  pnpm link --global xm-web-sdk
+```
+
+**注意：小程序执行完上面步骤后需要在微信开发者工具执行 npm构建**

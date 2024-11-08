@@ -7,7 +7,7 @@ const libraries = [
   {
     entry: './src/index.pc.ts',
     fileName: 'index.pc',
-    name: 'xm-web-sdk/pc'
+    name: 'xm-web-sdk'
   },
   {
     entry: './src/index.wx.ts',

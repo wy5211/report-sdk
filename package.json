@@ -9,7 +9,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "tsc": "tsc",
+    "build": "node ./build.js"
   },
   "main": "./dist/index.wx.js",
   "files": [
@@ -17,8 +18,8 @@
     "package.json",
     "README.md"
   ],
-  "types": "./dist/index.pc.d.ts",
-  "typings": "./dist/index.pc.d.ts",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
   "exports": {
     "./pc": {
       "import": "./dist/index.pc.js",

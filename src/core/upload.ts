@@ -32,7 +32,7 @@ class UploadManager {
     }
     try {
       logger.log('开始执行上报数据', sendData);
-      response = await request(sendData);
+      response = await request(sendData) as IResponseData;
       afterSend?.(response);
       this.count = 0;
 
@@ -40,6 +40,7 @@ class UploadManager {
       if (cacheKey) {
         emitter.emit(EmitterKeys.CLEAR_CACHE, [cacheKey, data]);
       }
+
       clearTimeout(this.timer);
     } catch (error) {
       logger.log('执行上报数据出错', error, sendData);

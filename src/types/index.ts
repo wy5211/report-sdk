@@ -44,8 +44,8 @@ export interface IConfig {
   platform?: IPlatform;
   /** 版本信息 */
   version?: string;
-  /** 环境信息 */
-  env?: string;
+  /** 环境信息, 必传 */
+  env: string;
   /** 最大缓存数量, 默认 20 */
   maxCacheCount?: number;
   /** 上传报错重试次数, 默认 3 */
@@ -65,7 +65,7 @@ export interface IConfig {
   /** 上传前调整数据上报格式 */
   beforeSend?: (data: IRequestConfig) => IRequestConfig;
   /** 上传请求 */
-  request: (config: IRequestConfig) => Promise<IResponseData>;
+  request: (config: IRequestConfig) => Promise<IResponseData | ICloudConfigResponse>;
   /** 上传后回调 */
   afterSend?: (response: IResponseData) => void;
 }
@@ -103,4 +103,10 @@ export interface IRequestConfig {
 
 export enum ICacheKeys {
   XM_WEB_SDK_APP_EVENT_KEY = 'XM_WEB_SDK_APP_EVENT_KEY'
+}
+
+export interface ICloudConfigResponse {
+  analysis_max_count: number;
+  ad_tx_sdk_app_id: string;
+  number_verification_service_app_id: string;
 }

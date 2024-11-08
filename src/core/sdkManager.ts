@@ -2,6 +2,7 @@ import { sdkDefaultConfig } from '@/config/sdkDefault';
 import type {
   IAdapter,
   ICache,
+  ICloudConfigResponse,
   IConfig,
   IRequestData,
   ITriggerData,
@@ -25,7 +26,7 @@ class SdkWebManager {
 
   /** 初始化 sdk */
   async init (config: IConfig) {
-    // 初始化配置
+    // 初始化配置，将传入的config注入this.config
     await this.initConfig(config);
 
     // 支持自定义缓存
@@ -46,7 +47,7 @@ class SdkWebManager {
       if (!this.adapter?.cache) {
         throw new Error(' 🚨 需要提供自定义缓存器');
       }
-      this.cache = new CacheManager(config, this.adapter.cache);
+      this.cache = new CacheManager(this.config, this.adapter.cache);
     }
 
     logger.log('初始化完成',this.config);
@@ -85,19 +86,19 @@ class SdkWebManager {
       throw new Error('请配置 request');
     }
     // 获取云端配置
-    let cloudConfig = {};
+    let cloudConfig = {} as ICloudConfigResponse;
     try {
       cloudConfig = await config.request(requestInstance({
         type: 'config',
         env: config?.getEnv?.() ?? config?.env,
-      }));
+      })) as ICloudConfigResponse;
     } catch (error) {}
 
     this.config = {
       ...sdkDefaultConfig,
       deviceInfo: this.adapter?.deviceInfo,
       ...config,
-      ...(cloudConfig || {}),
+      ...this.translateCloudConfig(cloudConfig || {}),
     }
   }
 
@@ -148,6 +149,13 @@ class SdkWebManager {
         throw new Error(` 🚨 自定义缓存器需要提供 【${k}】 方法`);
       }
     })
+  }
+
+  //
+  private translateCloudConfig(cloudConfig: ICloudConfigResponse): Partial<IConfig> {
+    return {
+      maxCacheCount: cloudConfig.analysis_max_count
+    }
   }
 }
 

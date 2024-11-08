@@ -11,6 +11,7 @@ import logger from '@/utils/logger';
 import UploadManager from './upload';
 import CacheManager from './cache';
 import { requestInstance } from './request';
+import { isFunction } from '@/utils';
 
 /**
  * 调度 sdk 初始化，上传 ，缓存功能
@@ -88,11 +89,17 @@ class SdkWebManager {
     // 获取云端配置
     let cloudConfig = {} as ICloudConfigResponse;
     try {
+      let env = config.env;
+      if (config.getEnv && isFunction(config.getEnv)) {
+        env = config.getEnv();
+      }
       cloudConfig = await config.request(requestInstance({
         type: 'config',
-        env: config?.getEnv?.() ?? config?.env,
+        env,
       })) as ICloudConfigResponse;
-    } catch (error) {}
+    } catch (error) {
+      logger.log('Error', error);
+    }
 
     this.config = {
       ...sdkDefaultConfig,

@@ -22,15 +22,15 @@
   "exports": {
     "./pc": {
       "import": "./dist/index.pc.js",
-      "require": "./dist/index.pc.cjs"
+      "require": "./dist/index.pc.umd.cjs"
     },
     "./wx": {
       "import": "./dist/index.wx.js",
-      "require": "./dist/index.wx.cjs"
+      "require": "./dist/index.wx.umd.cjs"
     },
     "./rn": {
       "import": "./dist/index.rn.js",
-      "require": "./dist/index.rn.cjs"
+      "require": "./dist/index.rn.umd.cjs"
     }
   },
   "devDependencies": {

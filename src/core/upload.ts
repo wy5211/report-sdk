@@ -1,3 +1,4 @@
+import { IAdapter } from './../types/index';
 import { requestInstance } from './request';
 import { EventType } from '@/config/eventType';
 import { IConfig, IRequestData, IResponseData, IQueueCacheMapper, ExtInfo, ICacheKeys } from '@/types';
@@ -11,7 +12,7 @@ class UploadManager {
   private count = 0;
   private timer: NodeJS.Timeout | undefined;
 
-  constructor(private config: IConfig) {
+  constructor(private config: IConfig, private adapter: IAdapter) {
     this.count = 0;
     emitter.on(EmitterKeys.CACHE_LIMITED_REACHED, (data: [ICacheKeys, IQueueCacheMapper]) => {
       logger.log('监听到上传缓存任务', data);
@@ -24,6 +25,9 @@ class UploadManager {
     let sendData = requestInstance({
       type: 'upload',
       body: data,
+      userId: this.config?.userId,
+      userChannel: this.adapter?.config?.userChannel,
+      version: this.config?.version
     });
 
     let response: IResponseData;

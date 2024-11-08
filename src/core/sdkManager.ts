@@ -40,7 +40,7 @@ class SdkWebManager {
     logger.set(!!this.config.openLogger);
 
     // 添加 上传管理器
-    this.uploader = new UploadManager(this.config);
+    this.uploader = new UploadManager(this.config, this.adapter);
     /**
      * 根据 autoReport 判断是否开启自动上传，否则上报的数据存入缓存中，达到一定数量后进行上传
     */
@@ -55,11 +55,12 @@ class SdkWebManager {
   }
 
   /** 动态更新配置 */
-  setConfig(clientConfig: Partial<IConfig>) {
+  async setConfig(clientConfig: Partial<IConfig>) {
     this.config = {
       ...this.config,
       ...clientConfig,
     };
+    await this.init(this.config);
     logger!.log(' 🎩 更新配置完成',this.config);
   }
 

@@ -90,8 +90,8 @@ class SdkWebManager {
     }
     // 获取云端配置
     let cloudConfig = {} as ICloudConfigResponse;
+    let env = config.env;
     try {
-      let env = config.env;
       if (config.getEnv && isFunction(config.getEnv)) {
         env = config.getEnv();
       }
@@ -108,6 +108,7 @@ class SdkWebManager {
       deviceInfo: config.deviceInfo || this.adapter?.deviceInfo,
       ...config,
       ...this.translateCloudConfig(cloudConfig || {}),
+      env: env || 'prod'
     }
   }
 

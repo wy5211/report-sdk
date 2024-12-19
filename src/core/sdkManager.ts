@@ -28,7 +28,7 @@ class SdkWebManager {
   /** 初始化 sdk */
   async init (config: IConfig) {
     // 初始化配置，将传入的config注入this.config
-    await this.initConfig(config);
+    await this.initConfig(config); 
 
     // 支持自定义缓存
     if (this.config.cache) {
@@ -41,7 +41,7 @@ class SdkWebManager {
 
     // 添加 上传管理器
     this.uploader = new UploadManager(this.config, this.adapter);
-    /**
+    /** 
      * 根据 autoReport 判断是否开启自动上传，否则上报的数据存入缓存中，达到一定数量后进行上传
     */
     if (!this.config?.autoReport) {
@@ -104,7 +104,7 @@ class SdkWebManager {
 
     this.config = {
       ...sdkDefaultConfig,
-      deviceInfo: this.adapter?.deviceInfo,
+      deviceInfo: config.deviceInfo || this.adapter?.deviceInfo,
       ...config,
       ...this.translateCloudConfig(cloudConfig || {}),
     }

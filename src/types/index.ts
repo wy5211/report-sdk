@@ -71,6 +71,7 @@ export interface IConfig {
 }
 /** 用户需要上传的数据 */
 export interface ITriggerData {
+  reportTimeing: 'immediately' | 'delay'
   eventType: EventType;
   extInfo: {
     eventType: ExtInfoEventType;

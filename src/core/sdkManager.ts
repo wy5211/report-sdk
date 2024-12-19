@@ -65,15 +65,16 @@ class SdkWebManager {
   }
 
   /** 上报事件 */
-  triggerEvent (eventData: ITriggerData) {
+  triggerEvent(eventData: ITriggerData) {
+    const { reportTimeing = 'delay' } = eventData;
     eventData.timestamp = +new Date();
     const { extInfo } = eventData || {};
     const { eventType, spmId } = extInfo || {};
     // 需要缓存第一次上报的 eventType
-    if (['pv'].includes(eventType)) {
+    if (['pv'].includes(eventType) && reportTimeing === 'delay') {
       if (this.lastRecordStack?.[spmId]) {
         const _data = this.generatePvData([this.lastRecordStack?.[spmId], eventData]);
-        this.handleUploadOrCache(_data);
+        this.handleUploadOrCache(_data); 
         this.lastRecordStack[spmId] = null;
       } else {
         this.lastRecordStack[spmId] = eventData;

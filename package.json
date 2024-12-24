@@ -1,44 +1,31 @@
 {
-  "name": "xm-web-sdk",
-  "version": "1.0.8",
+  "name": "wy-report-sdk",
+  "version": "1.0.11",
   "type": "module",
   "sideEffects": false,
   "engines": {
     "pnpm": ">=8 <10"
   },
   "scripts": {
-    "dev": "vite",
     "tsc": "tsc",
-    "build": "node ./build.js"
+    "build":"npm run build:lib && npm run build:es",
+    "prebuild": "rimraf lib && rimraf es",
+    "prepublishOnly": "npm run build",
+    "build:lib": "tsc --outDir lib --module commonjs",
+    "build:es": "tsc --outDir es"
   },
-  "main": "./dist/index.wx.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "types/index.d.ts",
   "files": [
-    "dist",
-    "package.json",
-    "README.md"
+    "es",
+    "lib",
+    "types"
   ],
-  "types": "./dist/index.d.ts",
-  "typings": "./dist/index.d.ts",
-  "exports": {
-    "./pc": {
-      "import": "./dist/index.pc.js",
-      "require": "./dist/index.pc.umd.cjs"
-    },
-    "./wx": {
-      "import": "./dist/index.wx.js",
-      "require": "./dist/index.wx.umd.cjs"
-    },
-    "./rn": {
-      "import": "./dist/index.rn.js",
-      "require": "./dist/index.rn.umd.cjs"
-    }
-  },
   "devDependencies": {
     "@types/node": "^22.8.7",
     "typescript": "~5.6.2",
-    "vite": "^5.4.10",
-    "vite-plugin-dts": "^4.3.0",
-    "vite-tsconfig-paths": "^5.0.1"
+    "rimraf": "^3.0.2"
   },
   "dependencies": {
     "mitt": "^3.0.1"

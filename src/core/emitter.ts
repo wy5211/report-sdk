@@ -1,5 +1,5 @@
-import { EmitterKeys } from "@/config/emitterKey";
-import { ICacheKeys, IQueueCacheMapper, IRequestData } from '@/types'
+import { EmitterKeys } from "../config/emitterKey";
+import { ICacheKeys, IQueueCacheMapper, IRequestData } from '../types'
 import mitt from "mitt";
 
 type Events = {

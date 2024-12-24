@@ -1,7 +1,7 @@
-import { IRequestData, IConfig, ICache, IQueueCacheMapper, ICacheKeys } from '@/types';
+import { IRequestData, IConfig, ICache, IQueueCacheMapper, ICacheKeys } from '../types';
 import emitter from './emitter';
-import { EmitterKeys } from '@/config/emitterKey';
-import logger from '@/utils/logger';
+import { EmitterKeys } from '../config/emitterKey';
+import logger from '../utils/logger';
 
 /**
  * 支持缓存数量达到一定数量自动上传

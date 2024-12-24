@@ -1,4 +1,4 @@
-import { IAdapter, ICache } from '@/types/index';
+import { IAdapter, ICache } from '../../types/index';
 import getDeviceInfo from './deviceInfo';
 import cache from './cache';
 import getConfig from './config';

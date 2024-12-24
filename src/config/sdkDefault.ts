@@ -1,4 +1,4 @@
-import { IConfig } from "@/types";
+import { IConfig } from "../types";
 
 export const sdkDefaultConfig: Partial<IConfig> = {
   retryCount: 3,

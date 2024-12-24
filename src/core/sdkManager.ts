@@ -1,4 +1,4 @@
-import { sdkDefaultConfig } from '@/config/sdkDefault';
+import { sdkDefaultConfig } from '../config/sdkDefault';
 import type {
   IAdapter,
   ICache,
@@ -6,12 +6,12 @@ import type {
   IConfig,
   IRequestData,
   ITriggerData,
-} from '@/types';
-import logger from '@/utils/logger';
+} from '../types';
+import logger from '../utils/logger';
 import UploadManager from './upload';
 import CacheManager from './cache';
 import { requestInstance } from './request';
-import { isFunction } from '@/utils';
+import { isFunction } from '../utils';
 
 /**
  * 调度 sdk 初始化，上传 ，缓存功能
@@ -107,7 +107,7 @@ class SdkWebManager {
       ...sdkDefaultConfig,
       deviceInfo: config.deviceInfo || this.adapter?.deviceInfo,
       ...config,
-      ...this.translateCloudConfig(cloudConfig || {}),
+      ...this.translateCloudConfig(cloudConfig),
       env: env || 'prod'
     }
   }

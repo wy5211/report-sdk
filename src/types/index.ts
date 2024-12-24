@@ -1,4 +1,4 @@
-import { EventType } from "@/config/eventType";
+import { EventType } from "../config/eventType";
 
 export type IFunc = (...args: any[]) => any;
 

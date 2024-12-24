@@ -1,11 +1,11 @@
 import { IAdapter } from './../types/index';
 import { requestInstance } from './request';
-import { EventType } from '@/config/eventType';
-import { IConfig, IRequestData, IResponseData, IQueueCacheMapper, ExtInfo, ICacheKeys } from '@/types';
-import { isFunction, chunk } from '@/utils';
+import { EventType } from '../config/eventType';
+import { IConfig, IRequestData, IResponseData, IQueueCacheMapper, ExtInfo, ICacheKeys } from '../types';
+import { isFunction, chunk } from '../utils';
 import emitter from './emitter';
-import { EmitterKeys } from '@/config/emitterKey';
-import logger from '@/utils/logger';
+import { EmitterKeys } from '../config/emitterKey';
+import logger from '../utils/logger';
 
 class UploadManager {
   /** 错误重试次数 */

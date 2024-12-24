@@ -1,4 +1,4 @@
-import { IRequestConfig } from "@/types";
+import { IRequestConfig } from "../types";
 
 const mapper = {
   config: { method: 'GET', path: '/config/$env/common.json', hostConfigKey: 'COS_URL' },
